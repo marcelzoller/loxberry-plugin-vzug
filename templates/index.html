@@ -15,34 +15,21 @@
 							&nbsp;
 							<font size="-1"><TMPL_VAR BASIC.VZUG_HIP></font>
 						</td>
-					</tr>
+					</tr>	
 					<tr>
 						<td width="25%">
-							<label id="labeludpport"><TMPL_VAR BASIC.VZUG_UDP></label>
-						</td>
-						<td width="50%">
-							<input  name="UDP_Port" type="text" class="textfield"
-								value="<TMPL_VAR NAME=UDPPORT>" data-validation-error-msg="* Please enter a MiniServer UDP-Port">
-						</td>
-						<td width="25%">
-							&nbsp;
-							<font size="-1"><TMPL_VAR BASIC.VZUG_HUDP></font>
-						</td>
-					</tr>
-					<tr>
-						<td width="25%">
-							<label id="labeludpsend"><TMPL_VAR BASIC.VZUG_UDPSEND></label>
+							<label id="labeludpsend"><TMPL_VAR BASIC.VZUG_HTTPSEND></label>
 						</td>
 						<td width="50%">
 						<fieldset>
-								<select  name="UDP_Send" data-role="flipswitch">
-									<option value="0"<TMPL_VAR NAME=UDPSENDNO>>Aus</option><option value="1" <TMPL_VAR NAME=UDPSENDYES>>Ein</option>\n
+								<select  name="HTTP_Send" data-role="flipswitch">
+									<option value="0"<TMPL_VAR NAME=HTTPSENDNO>>Aus</option><option value="1" <TMPL_VAR NAME=HTTPSENDYES>>Ein</option>\n
 								</select>
 							</fieldset>
 						</td>
 						<td width="25%">
 							&nbsp;
-							<font size="-1"><TMPL_VAR BASIC.VZUG_HUDPSEND></font>
+							<font size="-1"><TMPL_VAR BASIC.VZUG_HHTTPSEND></font>
 						</td>
 					</tr>					
 					<tr>

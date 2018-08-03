@@ -17,9 +17,14 @@ my %pcfg;
 my %miniservers;
 tie %pcfg, "Config::Simple", "$lbpconfigdir/pluginconfig.cfg";
 $UDP_Port = %pcfg{'MAIN.UDP_Port'};
-$UDP_Send_Enable = %pcfg{'MAIN.UDP_Send_Enable'};
+#$UDP_Send_Enable = %pcfg{'MAIN.UDP_Send_Enable'};
+$HTTP_TEXT_Send_Enable = %pcfg{'MAIN.HTTP_TEXT_Send_Enable'};
 %miniservers = LoxBerry::System::get_miniservers();
 $LOX_IP = $miniservers{1}{IPAddress};
+$LOX_User = $miniservers{1}{Admin_RAW};
+$LOX_PW = $miniservers{1}{Pass_RAW};
+
+
 
 # Create my logging object
 my $log = LoxBerry::Log->new ( 
@@ -83,9 +88,31 @@ print "Program1\@$ProgrammStr<br>";
 print "Status1\@$StatusStr<br>";
 print "Time1\@$ZeitStr<br>";
 
+# $ProgrammStr = "test";
+# $StatusStr = "läuft";
+# $ZeitStr = "2:12";
+
+if ($HTTP_TEXT_Send_Enable == 1) {
+	LOGDEB "Loxone IP: $LOX_IP";
+	LOGDEB "User: $LOX_User";
+	LOGDEB "Password: $LOX_PW";
+	# wgetstr = "wget --quiet --output-document=temp http://"+loxuser+":"+loxpw+"@"+loxip+"/dev/sps/io/VZUG_Adora_Programm/" + str(ProgrammStr) 
+	$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Status/$StatusStr");
+	$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Program/$ProgrammStr");
+	$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Time/$ZeitStr");
+	$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Devicename/$DeviceNameStr");
+	$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Serial/$SerialStr");
+	LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Status/$StatusStr";
+	LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Program/$ProgrammStr";
+	LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Time/$ZeitStr";
+	LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Devicename/$DeviceNameStr";
+	LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Serial/$SerialStr";
+	}
+	
 if ($UDP_Send_Enable == 1) {
 	print $sock "DeviceName1\@$DeviceNameStr\; Serial1\@$SerialStr\; Program1\@$ProgrammStr\; Status1\@$StatusStr\; Time1\@$ZeitStr";
 	LOGDEB "Loxone IP: $LOX_IP";
+
 	LOGDEB "UDP Port: $UDP_Port";
 	LOGDEB "UDP Send: DeviceName1\@$DeviceNameStr\; Serial1\@$SerialStr\; Program1\@$ProgrammStr\; Status1\@$StatusStr\; Time1\@$ZeitStr";
 	}
