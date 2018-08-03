@@ -1,0 +1,91 @@
+<h2>Settings V-ZUG - ZUG Auge</h2>
+	<form method="post" data-ajax="false" name="main_form" id="main_form" action="index.cgi">
+		<input type="hidden" name="save" value="save">
+			<div class="form-group">
+				<table class="formtable" border="0" width="100%">
+					<tr>
+						<td width="25%">
+							<label id="labelip"><TMPL_VAR BASIC.VZUG_IP></label>
+						</td>
+						<td width="50%">
+							<input  name="Dev1" type="text" class="textfield"
+								value="<TMPL_VAR NAME=IP1>" data-validation-error-msg="* Please enter IP-Adress">
+						</td>
+						<td width="25%">
+							&nbsp;
+							<font size="-1"><TMPL_VAR BASIC.VZUG_HIP></font>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labeludpport"><TMPL_VAR BASIC.VZUG_UDP></label>
+						</td>
+						<td width="50%">
+							<input  name="UDP_Port" type="text" class="textfield"
+								value="<TMPL_VAR NAME=UDPPORT>" data-validation-error-msg="* Please enter a MiniServer UDP-Port">
+						</td>
+						<td width="25%">
+							&nbsp;
+							<font size="-1"><TMPL_VAR BASIC.VZUG_HUDP></font>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labeludpsend"><TMPL_VAR BASIC.VZUG_UDPSEND></label>
+						</td>
+						<td width="50%">
+						<fieldset>
+								<select  name="UDP_Send" data-role="flipswitch">
+									<option value="0"<TMPL_VAR NAME=UDPSENDNO>>Aus</option><option value="1" <TMPL_VAR NAME=UDPSENDYES>>Ein</option>\n
+								</select>
+							</fieldset>
+						</td>
+						<td width="25%">
+							&nbsp;
+							<font size="-1"><TMPL_VAR BASIC.VZUG_HUDPSEND></font>
+						</td>
+					</tr>					
+					<tr>
+						<td width="25%">
+							<label id="labelmsenabled"><TMPL_VAR BASIC.VZUG_HTML></label>
+						</td>
+						<td width="50%">
+						<table border=0>
+							<tr><td>
+							  <fieldset>
+								 <select id="sendhtml" name="sendhtml" data-role="flipswitch" disabled=disabled>
+									<option value="0">Aus</option>
+									<option selected=selected value="1">Ein</option>
+									</select>
+							  </fieldset>
+							</td><td>
+									&nbsp;&nbsp;<font size="-1">URL: <a href="<TMPL_VAR NAME=WEBSITE>" target=_blank"><TMPL_VAR NAME=WEBSITE></a></font>
+							</td></tr>
+						</table>
+						</td>
+						<td width="25%">
+							&nbsp;
+							<font size="-1"><TMPL_VAR BASIC.VZUG_HHTML></font>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							&nbsp;
+						</td>
+						<td width="50%">
+							<center>
+								<a id="btncancel" data-role="button" data-inline="true" data-mini="true" data-icon="delete" href="./index.cgi?form=1">Abbrechen</a>
+								<button type="submit" form="main_form" id="do" data-role="button" data-inline="true" data-mini="true" data-icon="check">Speichern</button>
+							</center>
+						</td>
+						<td width="25%">
+							&nbsp;
+						</td>
+					</tr>		
+			</table>
+		</div>
+	</form>
+
+
+
+
