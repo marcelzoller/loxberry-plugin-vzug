@@ -73,14 +73,17 @@ $DeviceNameStr = $values[3];
 $SerialStr = $values[7];
 $ProgrammStr = $values[15];
 $StatusStr = $values[19];
-# $StatusStr = StatusStr.replace('\n',' ')
-$StatusStr =~ tr/\\n/ /;
+# Ersetzte \n durch ein leerzeichen
+$StatusStr =~ s/\n/ /g; 
 $ZeitStr = $values[25];
 
 # Wenn kein Programm läuft beim V-Zug, einfach einen - setzten.
-if ($StatusStr =~ m//) {    $StatusStr="-";  }
-if ($ProgrammStr =~ m//) {    $ProgrammStr="-";  }
-if ($ZeitStr =~ m//) {    $ZeitStr="-";  }
+# if ($StatusStr =~ m//) {    $StatusStr="-";  }
+# if ($ProgrammStr =~ m//) {    $ProgrammStr="-";  }
+# if ($ZeitStr =~ m//) {    $ZeitStr="-";  }
+if ($StatusStr eq "") {    $StatusStr="-";  }
+if ($ProgrammStr eq "") {    $ProgrammStr="-";  }
+if ($ZeitStr eq "") {    $ZeitStr="-";  }
 
 print "DeviceName1\@$DeviceNameStr<br>";
 print "Serial1\@$SerialStr<br>";
