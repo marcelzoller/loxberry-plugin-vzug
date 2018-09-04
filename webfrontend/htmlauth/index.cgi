@@ -88,6 +88,7 @@ my $HTTPSENDINTER = %pcfg{'MAIN.HTTP_TEXT_SEND_Intervall'};
 $template->param( IP1 => $IP1);
 $template->param( UDPPORT => $UDPPORT);
 $template->param( WEBSITE => "http://$ENV{HTTP_HOST}/plugins/$lbpplugindir/index.cgi");
+$template->param( LOGDATEI => "/admin/system/tools/logfile.cgi?logfile=plugins/$lbpplugindir/vzug.log&header=html&format=template");
 #$template->param( PNAME => "V-Zug");
 #$template->param( LBIP => "172.16.200.66");
 if ($UDPSEND == 1) {

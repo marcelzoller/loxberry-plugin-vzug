@@ -20,9 +20,10 @@ $UDP_Port = %pcfg{'MAIN.UDP_Port'};
 #$UDP_Send_Enable = %pcfg{'MAIN.UDP_Send_Enable'};
 $HTTP_TEXT_Send_Enable = %pcfg{'MAIN.HTTP_TEXT_Send_Enable'};
 %miniservers = LoxBerry::System::get_miniservers();
+$LOX_Name = $miniservers{1}{Name};
 $LOX_IP = $miniservers{1}{IPAddress};
-$LOX_User = $miniservers{1}{Admin_RAW};
-$LOX_PW = $miniservers{1}{Pass_RAW};
+$LOX_User = $miniservers{1}{Admin};
+$LOX_PW = $miniservers{1}{Pass};
 
 
 
@@ -39,9 +40,48 @@ my $sock = new IO::Socket::INET(PeerAddr => $LOX_IP,
                 PeerPort => $UDP_Port,
                 Proto => 'udp', Timeout => 1) or die('Error opening socket.');
 			
+
+# Loxone HA-Miniserver by Marcel Zoller	
+if($LOX_Name eq "lxZoller1"){
+	# Loxone Minisever ping test
+	LOGOK " Loxone Zoller HA-Miniserver";
+	#$LOX_IP="172.16.200.7"; #Testvariable
+	#$LOX_IP='172.16.200.6'; #Testvariable
+	$p = Net::Ping->new();
+	$p->port_number("80");
+	if ($p->ping($LOX_IP,2)) {
+				LOGOK "Ping Loxone: Miniserver1 is online.";
+				LOGOK "Ping Loxone: $p->ping($LOX_IP)";
+				$p->close();
+			} else{ 
+				LOGALERT "Ping Loxone: Miniserver1 not online!";
+				LOGDEB "Ping Loxone: $p->ping($LOX_IP)";
+				$p->close();
 				
+				$p = Net::Ping->new();
+				$p->port_number("80");
+				$LOX_IP = $miniservers{2}{IPAddress};
+				$LOX_User = $miniservers{2}{Admin};
+				$LOX_PW = $miniservers{2}{Pass};
+				#$LOX_IP="172.16.200.6"; #Testvariable
+				if ($p->ping($LOX_IP,2)) {
+					LOGOK "Ping Loxone: Miniserver2 is online.";
+					LOGOK "Ping Loxone: $p->ping($LOX_IP)";
+				} else {
+					LOGALERT "Ping Loxone: Miniserver2 not online!";
+					LOGDEB "Ping Loxone: $p->ping($LOX_IP)";
+					#Failback Variablen !!!
+					$LOX_IP = $miniservers{1}{IPAddress};
+					$LOX_User = $miniservers{1}{Admin};
+					$LOX_PW = $miniservers{1}{Pass};	
+				} 
+			}
+		$p->close();			
+}			
+
+LOGDEB "Loxone Name: $LOX_Name";			
 $dev1ip = %pcfg{'Device1.IP'};
-LOGDEB "Z-ZUG IP: $dev1ip";
+LOGDEB "V-ZUG IP: $dev1ip";
 # HTTP Status vom V-Zug Gerät abfragen und aufteilen
 $contents = get("http://$dev1ip/ai?command=getDeviceStatus");
 LOGDEB "SEND HTTP: http://$dev1ip/ai?command=getDeviceStatus";
@@ -49,9 +89,11 @@ LOGDEB "Result HTTP: $contents";
 if ($contents eq "") { 
 	# print "Keine V-Zug Device gefunden. Falsche IP oder nicht kompatibel<br>"; 
 	$p = Net::Ping->new();
-	if ($p->ping($dev1ip,1)) {
+	$p->port_number("80");
+	if ($p->ping($dev1ip,2)) {
 			print "$dev1ip is not a V-Zug Device or compatible!<br><br>";
 			LOGALERT "Ping: V-Zug IP ping found, wrong IP or not compatible";
+			LOGDEB "Ping: $p->ping($dev1ip)";
 		} else{ 
 			print "$dev1ip ist not reachable!<br><br>";
 			#print "$p->ping($dev1ip)<br>";
