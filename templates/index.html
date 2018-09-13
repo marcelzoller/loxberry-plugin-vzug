@@ -15,7 +15,21 @@
 							&nbsp;
 							<font size="-1"><TMPL_VAR BASIC.VZUG_HIP></font>
 						</td>
-					</tr>	
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelfbpass">Miniserver:</label>
+						</td>
+						<td width="50%">
+							<select id="miniserver" name="miniserver" data-mini="true" onchange="selMS(this);">
+								<TMPL_VAR NAME=LOXLIST>
+							</select>
+						</td>
+						<td width="25%">
+							&nbsp;
+							<font size="-1"><TMPL_VAR BASIC.VZUG_HMINISERVER></font>
+						</td>
+					</tr>
 					<tr>
 						<td width="25%">
 							<label id="labeludpsend"><TMPL_VAR BASIC.VZUG_HTTPSEND></label>

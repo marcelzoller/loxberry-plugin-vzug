@@ -19,12 +19,22 @@ tie %pcfg, "Config::Simple", "$lbpconfigdir/pluginconfig.cfg";
 $UDP_Port = %pcfg{'MAIN.UDP_Port'};
 #$UDP_Send_Enable = %pcfg{'MAIN.UDP_Send_Enable'};
 $HTTP_TEXT_Send_Enable = %pcfg{'MAIN.HTTP_TEXT_Send_Enable'};
+$MINISERVER = %pcfg{'MAIN.MINISERVER'};
 %miniservers = LoxBerry::System::get_miniservers();
-$LOX_Name = $miniservers{1}{Name};
-$LOX_IP = $miniservers{1}{IPAddress};
-$LOX_User = $miniservers{1}{Admin};
-$LOX_PW = $miniservers{1}{Pass};
 
+
+# Miniserver konfig auslesen
+#print "\n".substr($MINISERVER, 10, length($MINISERVER))."\n";
+$i = substr($MINISERVER, 10, length($MINISERVER));
+$LOX_Name = $miniservers{$i}{Name};
+$LOX_IP = $miniservers{$i}{IPAddress};
+$LOX_User = $miniservers{$i}{Admin};
+$LOX_PW = $miniservers{$i}{Pass};
+
+print "Miniserver\@".$LOX_Name."<br>";
+#print $LOX_IP."<br>";
+#print $LOX_User."<br>";
+#print $LOX_PW."<br>";
 
 
 # Create my logging object

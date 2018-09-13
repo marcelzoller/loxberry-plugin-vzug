@@ -11,7 +11,10 @@ use LoxBerry::Log;
   
 # Die Version des Plugins wird direkt aus der Plugin-Datenbank gelesen.
 my $version = LoxBerry::System::pluginversion();
- 
+
+# Loxone Miniserver Select Liste Variable
+our $MSselectlist;
+
 # Mit dieser Konstruktion lesen wir uns alle POST-Parameter in den Namespace R.
 my $cgi = CGI->new;
 $cgi->import_names('R');
@@ -33,6 +36,10 @@ LoxBerry::Web::lbheader("V-ZUG Plugin V$version", "http://www.loxwiki.eu/V-Zug/Z
 # Wir holen uns die Plugin-Config in den Hash %pcfg. Damit kannst du die Parameter mit $pcfg{'Section.Label'} direkt auslesen.
 my %pcfg;
 tie %pcfg, "Config::Simple", "$lbpconfigdir/pluginconfig.cfg";
+
+# Alle Miniserver aus Loxberry config auslesen
+%miniservers = LoxBerry::System::get_miniservers();
+
  
 
 # Wir initialisieren unser Template. Der Pfad zum Templateverzeichnis steht in der globalen Variable $lbptemplatedir.
@@ -45,30 +52,15 @@ my $template = HTML::Template->new(
 	associate => $cgi,
 );
   
-# Jetzt lassen wir uns die Sprachphrasen lesen. Ohne Pfadangabe wird im Ordner lang nach language_de.ini, language_en.ini usw. gesucht.
-# Wir kümmern uns im Code nicht weiter darum, welche Sprache nun zu lesen wäre.
-# Mit der Routine wird die Sprache direkt ins Template übernommen. Sollten wir trotzdem im Code eine brauchen, bekommen
-# wir auch noch einen Hash zurück.
+
+# Sprachdatei laden
 my %L = LoxBerry::Web::readlanguage($template, "language.ini");
   
-# Checkboxen, Select-Lists sind mit HTML::Template kompliziert. Einfacher ist es, mit CGI das HTML-Element bauen zu lassen und dann
-# das fertige Element ins Template einzufügen. Für die Labels und Auswahlen lesen wir aus der Config $pcfg und dem Sprachhash $L.
-# Nicht mehr sicher, ob in der Config True, Yes, On, Enabled oder 1 steht? Die LoxBerry-Funktion is_enabled findet's heraus.
-# my $activated = $cgi->checkbox(-name => 'activated',
-#                                  -checked => is_enabled($pcfg{'MAIN.SOMEOTHEROPTION'}),
-#                                    -value => 'True',
-#                                    -label => $L{'BASIC.IS_ENABLED'},
-#                                );
-# Den so erzeugten HTML-Code schreiben wir ins Template.
-
-
-
 
 
 ##########################################################################
 # Process form data
 ##########################################################################
-
 if ($cgi->param("save")) {
 	# Data were posted - save 
 	&save;
@@ -83,9 +75,24 @@ my $UDPSEND = %pcfg{'MAIN.UDP_Send_Enable'};
 my $UDPSENDINTER = %pcfg{'MAIN.UDP_SEND_Intervall'};
 my $HTTPSEND = %pcfg{'MAIN.HTTP_TEXT_Send_Enable'};
 my $HTTPSENDINTER = %pcfg{'MAIN.HTTP_TEXT_SEND_Intervall'};
+my $miniserver = %pcfg{'MAIN.MINISERVER'};
 
+%miniservers = LoxBerry::System::get_miniservers();
+#print "Anzahl deiner Miniserver: " . keys(%miniservers);
+
+##########################################################################
+# Fill Miniserver selection dropdown
+##########################################################################
+for (my $i = 1; $i <=  keys(%miniservers);$i++) {
+	if ("MINISERVER$i" eq $miniserver) {
+		$MSselectlist .= '<option selected value="'.$i.'">'.$miniservers{$i}{Name}."</option>\n";
+	} else {
+		$MSselectlist .= '<option value="'.$i.'">'.$miniservers{$i}{Name}."</option>\n";
+	}
+}
 
 $template->param( IP1 => $IP1);
+$template->param(LOXLIST => $MSselectlist);
 $template->param( UDPPORT => $UDPPORT);
 $template->param( WEBSITE => "http://$ENV{HTTP_HOST}/plugins/$lbpplugindir/index.cgi");
 $template->param( LOGDATEI => "/admin/system/tools/logfile.cgi?logfile=plugins/$lbpplugindir/vzug.log&header=html&format=template");
@@ -140,6 +147,11 @@ sub save
 	if ($R::Dev1 != "") {
 			#print "DEV1:$R::Dev1<br>\n";
 			$pcfg{'Device1.IP'} = $R::Dev1;
+			# tied(%pcfg)->write();
+		} 
+	if ($R::miniserver != "") {
+			#print "miniserver:$R::miniserver<br>\n";
+			$pcfg{'MAIN.MINISERVER'} = "MINISERVER".$R::miniserver;
 			# tied(%pcfg)->write();
 		} 
 	if ($R::UDP_Port != "") {
