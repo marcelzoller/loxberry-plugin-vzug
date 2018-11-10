@@ -163,6 +163,9 @@ if ($HTTP_TEXT_Send_Enable == 1) {
 	LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Devicename/$DeviceNameStr";
 	LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Serial/$SerialStr";
 	}
+else {
+	LOGDEB "HTTP_TEXT_Send_Enable: 0";
+}
 	
 if ($UDP_Send_Enable == 1) {
 	print $sock "DeviceName1\@$DeviceNameStr\; Serial1\@$SerialStr\; Program1\@$ProgrammStr\; Status1\@$StatusStr\; Time1\@$ZeitStr";

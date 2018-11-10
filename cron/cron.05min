@@ -9,7 +9,7 @@
 
 # Will be executed as user "loxberry".
 
-if [ -e REPLACEBYBASEFOLDER/webfrontend/html/plugins/REPLACEBYSUBFOLDER/index.cgi ]
+if [ -e REPLACELBPHTMLDIR/index.cgi ]
 then
-  /usr/bin/perl REPLACEBYBASEFOLDER/webfrontend/html/plugins/REPLACEBYSUBFOLDER/index.cgi
+  /usr/bin/perl REPLACELBPHTMLDIR/index.cgi
 fi

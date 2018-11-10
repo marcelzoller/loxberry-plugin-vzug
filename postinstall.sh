@@ -45,8 +45,8 @@ PSBIN=$LBPSBIN/$PDIR
 PBIN=$LBPBIN/$PDIR
 
 # Replace real subfolder and scriptname in config file and create subfolder.dat in CGI folder
-/bin/sed -i "s#REPLACEBYBASEFOLDER#$LBHOMEDIR#" $LBHOMEDIR/system/cron/cron.05min/$PDIR
-/bin/sed -i "s#REPLACEBYSUBFOLDER#$PDIR#" $LBHOMEDIR/system/cron/cron.05min/$PDIR
+/bin/sed -i "s#REPLACELBPHTMLDIR#$LBHOMEDIR#" $LBHOMEDIR/system/cron/cron.05min/$PDIR
+# /bin/sed -i "s#REPLACEBYSUBFOLDER#$PDIR#" $LBHOMEDIR/system/cron/cron.05min/$PDIR
 
 echo -n "<INFO> Current working folder is: "
 pwd
