@@ -67,9 +67,9 @@ mkdir -p /tmp/$PSHNAME\_upgrade/config
 mkdir -p /tmp/$PSHNAME\_upgrade/log
 
 echo "<INFO> Backing up existing config files"
-cp -p -v -r $PCONFIG/ /tmp/$PSHNAME\_upgrade/config
+cp -p -v -r $PCONFIG/* /tmp/$PSHNAME\_upgrade/config
 
 echo "<INFO> Backing up existing log files"
-cp -p -v -r $PLOG/ /tmp/$PSHNAME\_upgrade/log
+cp -p -v -r $PLOG/* /tmp/$PSHNAME\_upgrade/log
 
 exit 0
