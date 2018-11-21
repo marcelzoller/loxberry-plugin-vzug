@@ -62,7 +62,7 @@ echo "<INFO> Plugin CONFIG folder is: $PCONFIG"
 
 # Restore Config und Log Files V-ZUG
 echo "<INFO> Copy back existing config files"
-cp -p -v -r /tmp/$PSHNAME\_upgrade/config/* $PCONFIG/ 
+cp -p -v -r /tmp/$PSHNAME\_upgrade/config/* $PCONFIG/
 
 echo "<INFO> Copy back existing log files"
 cp -p -v -r /tmp/$PSHNAME\_upgrade/log/* $PLOG/
