@@ -60,4 +60,16 @@ echo "<INFO> Plugin Data folder is: $PDATA"
 echo "<INFO> Plugin Log folder (on RAMDISK!) is: $PLOG"
 echo "<INFO> Plugin CONFIG folder is: $PCONFIG"
 
+# Backup Config und Log Files V-ZUG
+echo "<INFO> Creating temporary folders for upgrading"
+mkdir -p /tmp/$PSHNAME\_upgrade
+mkdir -p /tmp/$PSHNAME\_upgrade/config
+mkdir -p /tmp/$PSHNAME\_upgrade/log
+
+echo "<INFO> Backing up existing config files"
+cp -p -v -r $PCONFIG/ /tmp/$PSHNAME\_upgrade/config
+
+echo "<INFO> Backing up existing log files"
+cp -p -v -r $PLOG/ /tmp/$PSHNAME\_upgrade/log
+
 exit 0
