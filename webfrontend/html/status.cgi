@@ -58,7 +58,7 @@ my $POST_DevName = $R::DeviceName;
 if($POST_DevName eq ""){
 	$POST_DevName="Device1";	
 }
-print "$POST_DevName<br>";
+#print "$POST_DevName<br>";
 
 # UDP-Port Erstellen für Loxone
 my $sock = new IO::Socket::INET(PeerAddr => $LOX_IP,
