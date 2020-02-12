@@ -5,7 +5,7 @@
 				<table class="formtable" border="0" width="100%">
 					<tr>
 						<td width="25%">
-							<label id="labelip"><b><TMPL_VAR BASIC.VZUG_IP></b></label>
+							<label id="labelip1"><b><TMPL_VAR BASIC.VZUG_IP1></b></label>
 						</td>
 						<td width="50%">
 							<input  name="Dev1" type="text" class="textfield"
@@ -14,6 +14,49 @@
 						<td width="25%">
 							&nbsp;
 							<font size="-1"><TMPL_VAR BASIC.VZUG_HIP></font>
+							<br>&nbsp;<font size="-1">URL: <a href="<TMPL_VAR NAME=WEBIP1>" target=_blank"><TMPL_VAR NAME=WEBIP1></a></font>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelip2"><b><TMPL_VAR BASIC.VZUG_IP2></b></label>
+						</td>
+						<td width="50%">
+							<input  name="Dev2" type="text" class="textfield"
+								value="<TMPL_VAR NAME=IP2>" data-validation-error-msg="* Please enter IP-Adress">
+						</td>
+						<td width="25%">
+							&nbsp;
+							<font size="-1"><TMPL_VAR BASIC.VZUG_HIP></font>
+							<br>&nbsp;<font size="-1">URL: <a href="<TMPL_VAR NAME=WEBIP2>" target=_blank"><TMPL_VAR NAME=WEBIP2></a></font>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelip3"><b><TMPL_VAR BASIC.VZUG_IP3></b></label>
+						</td>
+						<td width="50%">
+							<input  name="Dev3" type="text" class="textfield"
+								value="<TMPL_VAR NAME=IP3>" data-validation-error-msg="* Please enter IP-Adress">
+						</td>
+						<td width="25%">
+							&nbsp;
+							<font size="-1"><TMPL_VAR BASIC.VZUG_HIP></font>
+							<br>&nbsp;<font size="-1">URL: <a href="<TMPL_VAR NAME=WEBIP3>" target=_blank"><TMPL_VAR NAME=WEBIP3></a></font>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelip4"><b><TMPL_VAR BASIC.VZUG_IP4></b></label>
+						</td>
+						<td width="50%">
+							<input  name="Dev4" type="text" class="textfield"
+								value="<TMPL_VAR NAME=IP4>" data-validation-error-msg="* Please enter IP-Adress">
+						</td>
+						<td width="25%">
+							&nbsp;
+							<font size="-1"><TMPL_VAR BASIC.VZUG_HIP></font>
+							<br>&nbsp;<font size="-1">URL: <a href="<TMPL_VAR NAME=WEBIP4>" target=_blank"><TMPL_VAR NAME=WEBIP4></a></font>
 						</td>
 					</tr>
 					<tr>
@@ -60,7 +103,7 @@
 									</select>
 							  </fieldset>
 							</td><td>
-									&nbsp;&nbsp;<font size="-1">URL: <a href="<TMPL_VAR NAME=WEBSITE>" target=_blank"><TMPL_VAR NAME=WEBSITE></a></font>
+	
 							</td></tr>
 						</table>
 						</td>

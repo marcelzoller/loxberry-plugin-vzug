@@ -105,14 +105,14 @@ if($LOX_Name eq "lxZoller1"){
 }		
 
 my @vzugIP;
-# Wenn keine POST, dann alle Magic Home Controller abfragen
+# Wenn keine POST, dann alle V-Zug Geräte abfragen
 
 my $hisIP;
 
 if($POST_IP==""){
 	# V-ZUG Status IP 
 	LOGDEB "Broadcast Scan nach V-Zug Geräten";
-	#print "leer<br>";
+	# print "leer<br>";
 	
 
 	# Hier startet der SCAN (Broadcast)

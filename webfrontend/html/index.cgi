@@ -36,6 +36,17 @@ print "Miniserver\@".$LOX_Name."<br>";
 #print $LOX_User."<br>";
 #print $LOX_PW."<br>";
 
+# Mit dieser Konstruktion lesen wir uns alle POST-Parameter in den Namespace R.
+my $cgi = CGI->new;
+$cgi->import_names('R');
+# Ab jetzt kann beispielsweise ein POST-Parameter 'form' ausgelesen werden mit $R::form.
+
+
+# POST request
+$VZug_IP = $R::ip;
+# $VZug_IP = "172.16.200.105";
+
+
 
 # Create my logging object
 my $log = LoxBerry::Log->new ( 
@@ -87,93 +98,122 @@ if($LOX_Name eq "lxZoller1"){
 				} 
 			}
 		$p->close();			
-}			
-
-LOGDEB "Loxone Name: $LOX_Name";			
-$dev1ip = %pcfg{'Device1.IP'};
-LOGDEB "V-ZUG IP: $dev1ip";
-# HTTP Status vom V-Zug Gerät abfragen und aufteilen
-$contents = get("http://$dev1ip/ai?command=getDeviceStatus");
-LOGDEB "SEND HTTP: http://$dev1ip/ai?command=getDeviceStatus";
-LOGDEB "Result HTTP: $contents";
-if ($contents eq "") { 
-	# print "Keine V-Zug Device gefunden. Falsche IP oder nicht kompatibel<br>"; 
-	$p = Net::Ping->new();
-	$p->port_number("80");
-	if ($p->ping($dev1ip,2)) {
-			print "$dev1ip is not a V-Zug Device or compatible!<br><br>";
-			LOGALERT "Ping: V-Zug IP ping found, wrong IP or not compatible";
-			LOGDEB "Ping: $p->ping($dev1ip)";
-		} else{ 
-			print "$dev1ip ist not reachable!<br><br>";
-			#print "$p->ping($dev1ip)<br>";
-			LOGALERT "Ping: V-Zug IP ping not found";
-			LOGDEB "Ping: $p->ping($dev1ip)";
-		}
-    $p->close();
-
-	
-	}
-	
-	
-
-	
-my @values = split('\"', $contents);
-
-# Werte aus dem Result auswerten und in Variablen schreiben
-$DeviceNameStr = $values[3];
-$SerialStr = $values[7];
-$ProgrammStr = $values[15];
-$StatusStr = $values[19];
-# Ersetzte \n durch ein leerzeichen
-$StatusStr =~ s/\n/ /g; 
-$ZeitStr = $values[25];
-
-# Wenn kein Programm läuft beim V-Zug, einfach einen - setzten.
-# if ($StatusStr =~ m//) {    $StatusStr="-";  }
-# if ($ProgrammStr =~ m//) {    $ProgrammStr="-";  }
-# if ($ZeitStr =~ m//) {    $ZeitStr="-";  }
-if ($StatusStr eq "") {    $StatusStr="-";  }
-if ($ProgrammStr eq "") {    $ProgrammStr="-";  }
-if ($ZeitStr eq "") {    $ZeitStr="-";  }
-
-print "DeviceName1\@$DeviceNameStr<br>";
-print "Serial1\@$SerialStr<br>";
-print "Program1\@$ProgrammStr<br>";
-print "Status1\@$StatusStr<br>";
-print "Time1\@$ZeitStr<br>";
-
-# $ProgrammStr = "test";
-# $StatusStr = "läuft";
-# $ZeitStr = "2:12";
-
-if ($HTTP_TEXT_Send_Enable == 1) {
-	LOGDEB "Loxone IP: $LOX_IP";
-	LOGDEB "User: $LOX_User";
-	LOGDEB "Password: $LOX_PW";
-	# wgetstr = "wget --quiet --output-document=temp http://"+loxuser+":"+loxpw+"@"+loxip+"/dev/sps/io/VZUG_Adora_Programm/" + str(ProgrammStr) 
-	$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Status/$StatusStr");
-	$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Program/$ProgrammStr");
-	$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Time/$ZeitStr");
-	$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Devicename/$DeviceNameStr");
-	$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Serial/$SerialStr");
-	LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Status/$StatusStr";
-	LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Program/$ProgrammStr";
-	LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Time/$ZeitStr";
-	LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Devicename/$DeviceNameStr";
-	LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device1_Serial/$SerialStr";
-	}
-else {
-	LOGDEB "HTTP_TEXT_Send_Enable: 0";
 }
-	
-if ($UDP_Send_Enable == 1) {
-	print $sock "DeviceName1\@$DeviceNameStr\; Serial1\@$SerialStr\; Program1\@$ProgrammStr\; Status1\@$StatusStr\; Time1\@$ZeitStr";
-	LOGDEB "Loxone IP: $LOX_IP";
 
-	LOGDEB "UDP Port: $UDP_Port";
-	LOGDEB "UDP Send: DeviceName1\@$DeviceNameStr\; Serial1\@$SerialStr\; Program1\@$ProgrammStr\; Status1\@$StatusStr\; Time1\@$ZeitStr";
+my @vzugIP;
+# Alle VZUG IPs aus der Konfig
+my $hisIP;	
+my $k;	
+for (my $i=0; $i < 4; $i++) {
+	$k = $i+1;
+	$dev1ip = %pcfg{"Device$k.IP"};
+	push @vzugIP, $dev1ip;
+	#print "$vzugIP[$i]<br>";
+
+	LOGDEB "Loxone Name: $LOX_Name";			
+	# $dev1ip = %pcfg{'Device1.IP'};
+	if ($VZug_IP ne "") {
+		$dev1ip = $VZug_IP;
 	}
+	LOGDEB "V-ZUG IP: $dev1ip";
+	# HTTP Status vom V-Zug Gerät abfragen und aufteilen
+	$contents = get("http://$dev1ip/ai?command=getDeviceStatus");
+	LOGDEB "SEND HTTP: http://$dev1ip/ai?command=getDeviceStatus";
+	LOGDEB "Result HTTP: $contents";
+	if ($contents eq "") { 
+		# print "Keine V-Zug Device gefunden. Falsche IP oder nicht kompatibel<br>"; 
+		$p = Net::Ping->new();
+		$p->port_number("80");
+		if ($p->ping($dev1ip,2)) {
+				print "$dev1ip is not a V-Zug Device or compatible!<br><br>";
+				LOGALERT "Ping: V-Zug IP ping found, wrong IP or not compatible";
+				LOGDEB "Ping: $p->ping($dev1ip)";
+			} else{ 
+				print "$dev1ip ist not reachable!<br>";
+				#print "$p->ping($dev1ip)<br>";
+				LOGALERT "Ping: V-Zug IP ping not found";
+				LOGDEB "Ping: $p->ping($dev1ip)";
+			}
+		$p->close();
+
+		
+		}
+		
+		
+
+		
+	my @values = split('\"', $contents);
+
+	# Werte aus dem Result auswerten und in Variablen schreiben
+	$DeviceNameStr = $values[3];
+	$SerialStr = $values[7];
+	$ProgrammStr = $values[15];
+	$StatusStr = $values[19];
+	# Ersetzte \n durch ein leerzeichen
+	$StatusStr =~ s/\n/ /g; 
+	$ZeitStr = $values[25];
+	
+	# $ProgrammStr = "test";
+	# $StatusStr = "läuft";
+	# $ZeitStr = "2h12";
+	
+	
+	# Wenn kein Programm läuft beim V-Zug, einfach einen - setzten.
+	if ($StatusStr eq "") {    $StatusStr="-";  }
+	if ($ProgrammStr eq "") {    $ProgrammStr="-";  }
+	# $ZeitStr="3h22";
+	if ($ZeitStr eq "") {    
+			$ZeitStr="-";  
+			$MinStr ="0";
+			# print "VZug Programm fertig<br>";
+		} else {
+			my @words = split /h/, $ZeitStr;
+			$MinStr=$words[0]*60+$words[1]; 
+			
+		}
+
+
+	print "DeviceName$k\@$DeviceNameStr<br>";
+	print "Serial$k\@$SerialStr<br>";
+	print "Program$k\@$ProgrammStr<br>";
+	print "Status$k\@$StatusStr<br>";
+	print "Time$k\@$ZeitStr<br>";
+	print "Min$k\@$MinStr<br><br>";
+
+
+
+	if ($HTTP_TEXT_Send_Enable == 1) {
+		LOGDEB "Loxone IP: $LOX_IP";
+		LOGDEB "User: $LOX_User";
+		LOGDEB "Password: $LOX_PW";
+		# wgetstr = "wget --quiet --output-document=temp http://"+loxuser+":"+loxpw+"@"+loxip+"/dev/sps/io/VZUG_Adora_Programm/" + str(ProgrammStr) 
+		$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Status/$StatusStr");
+		$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Program/$ProgrammStr");
+		$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Time/$ZeitStr");
+		$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Min/$MinStr");
+		$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Devicename/$DeviceNameStr");
+		$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Serial/$SerialStr");
+		LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Status/$StatusStr";
+		LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Program/$ProgrammStr";
+		LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Time/$ZeitStr";
+		LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Min/$MinStr";
+		LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Devicename/$DeviceNameStr";
+		LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Serial/$SerialStr";
+		}
+	else {
+		LOGDEB "HTTP_TEXT_Send_Enable: 0";
+	}
+		
+	if ($UDP_Send_Enable == 1) {
+		print $sock "DeviceName$k\@$DeviceNameStr\; Serial$k\@$SerialStr\; Program$k\@$ProgrammStr\; Status$k\@$StatusStr\; Time$k\@$ZeitStr; Min$k\@$MinStr";
+		LOGDEB "Loxone IP: $LOX_IP";
+
+		LOGDEB "UDP Port: $UDP_Port";
+		LOGDEB "UDP Send: DeviceName$k\@$DeviceNameStr\; Serial$k\@$SerialStr\; Program$k\@$ProgrammStr\; Status$k\@$StatusStr\; Time$k\@$ZeitStr; Min$k\@$MinStr";
+		}
+
+	
+}
 
 # We start the log. It will print and store some metadata like time, version numbers
 # LOGSTART "V-ZUG cronjob start";
