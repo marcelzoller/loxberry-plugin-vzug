@@ -173,10 +173,26 @@ foreach my $n (@vzugIP){
 	#print "DevName $POST_DevName<br>";
 	# Ab hier kommt die Abfrage
 		
-	LOGDEB "Loxone Name: $LOX_Name";			
+	LOGDEB "Loxone Name: $LOX_Name";
+
 	#$dev1ip = %pcfg{'Device1.IP'};
 	my $dev1ip = $n;
 	LOGDEB "V-ZUG IP: $dev1ip";
+	
+	# API Version Abfragen
+	# http://172.16.200.158/ai?command=getAPIVersion
+	# {"value":"1.7.0"}
+	# Version 1.1.0 ist die alte APIVersion
+	# Version 1.7.0 ist die neue APIVersion mit Abfrage mit hh?command=getProgram
+	# http://172.16.200.158/hh?command=getProgram
+	# [{"id":2500,"name":"Stark trocken","status":"active","duration":{"set":12000,"act":1271},"allowedStatusChanges":{"options":["idle","paused"]}}]
+		
+	my $contentsAPIVersion = get("http://$dev1ip/ai?command=getAPIVersion");
+	LOGDEB "SEND HTTP: http://$dev1ip/ai?command=getAPIVersion";
+	LOGDEB "Result HTTP: $contentsAPIVersion";
+
+	
+	
 	# HTTP Status vom V-Zug Gerät abfragen und aufteilen
 	my $contents = get("http://$dev1ip/ai?command=getDeviceStatus");
 	LOGDEB "SEND HTTP: http://$dev1ip/ai?command=getDeviceStatus";
@@ -199,7 +215,9 @@ foreach my $n (@vzugIP){
 
 		
 		}
-		
+	
+	my @values = split('\"',$contentsAPIVersion);
+	my $DeviceAPIVersionStr= $values[3];	
 		
 	my @values = split('\"', $contents);
 
@@ -208,8 +226,8 @@ foreach my $n (@vzugIP){
 	my $SerialStr = $values[7];
 	my $ProgrammStr = $values[15];
 	my $StatusStr = $values[19];
-	# Ersetzte \n durch ein leerzeichen
-	my $StatusStr =~ s/\n/ /g; 
+	# Ersetzte \n durch ein leerzeichen - leerzeichen
+	$StatusStr =~ s/\\n/ - /; 
 	my $ZeitStr = $values[25];
 
 	# Wenn kein Programm läuft beim V-Zug, einfach einen - setzten.
@@ -221,45 +239,11 @@ foreach my $n (@vzugIP){
 	if ($ZeitStr eq "") {    $ZeitStr="-";  }
 
 	print "DeviceName\@$DeviceNameStr<br>";
+	print "APIVersion\@$DeviceAPIVersionStr<br>";
 	print "Serial\@$SerialStr<br>";
 	print "Program\@$ProgrammStr<br>";
 	print "Status\@$StatusStr<br>";
-	print "Time\@$ZeitStr<br>";
-
-
-	# $ProgrammStr = "test";
-	# $StatusStr = "läuft";
-	# $ZeitStr = "2:12";
-
-	# Immer via HTTP schicken - Gateway Webseite
-	$HTTP_TEXT_Send_Enable = 1;
-	if ($HTTP_TEXT_Send_Enable == 1) {
-		LOGDEB "Loxone IP: $LOX_IP";
-		LOGDEB "User: $LOX_User";
-		LOGDEB "Password: $LOX_PW";
-		# wgetstr = "wget --quiet --output-document=temp http://"+loxuser+":"+loxpw+"@"+loxip+"/dev/sps/io/VZUG_Adora_Programm/" + str(ProgrammStr) 
-		$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_$POST_DevName\_Status/$StatusStr");
-		$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_$POST_DevName\_Program/$ProgrammStr");
-		$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_$POST_DevName\_Time/$ZeitStr");
-		$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_$POST_DevName\_Devicename/$DeviceNameStr");
-		$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_$POST_DevName\_Serial/$SerialStr");
-		LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_$POST_DevName\_Status/$StatusStr";
-		LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_$POST_DevName\_Program/$ProgrammStr";
-		LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_$POST_DevName\_Time/$ZeitStr";
-		LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_$POST_DevName\_Devicename/$DeviceNameStr";
-		LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_$POST_DevName\_Serial/$SerialStr";
-		}
-	else {
-		LOGDEB "HTTP_TEXT_Send_Enable: 0";
-	}
-		
-	#if ($UDP_Send_Enable == 1) {
-	#	print $sock "DeviceName1\@$DeviceNameStr\; Serial1\@$SerialStr\; Program1\@$ProgrammStr\; Status1\@$StatusStr\; Time1\@$ZeitStr";
-	#	LOGDEB "Loxone IP: $LOX_IP";
-#
-#		LOGDEB "UDP Port: $UDP_Port";
-#		LOGDEB "UDP Send: DeviceName1\@$DeviceNameStr\; Serial1\@$SerialStr\; Program1\@$ProgrammStr\; Status1\@$StatusStr\; Time1\@$ZeitStr";
-#		}
+	print "Time\@$ZeitStr<br><br><br>";
 
 	
 }  
