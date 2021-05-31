@@ -130,6 +130,17 @@ for (my $i=0; $i < $anzahl; $i++) {
 		# Version 1.7.0 ist die neue APIVersion mit Abfrage mit hh?command=getProgram
 		# http://172.16.200.158/hh?command=getProgram
 		# [{"id":2500,"name":"Stark trocken","status":"active","duration":{"set":12000,"act":1271},"allowedStatusChanges":{"options":["idle","paused"]}}]
+		# 
+		# http://172.16.200.158/hh?command=doTurnOff
+		# http://172.16.200.105/hh?command=doTurnOff
+		# 
+		# http://172.16.200.105/hh?command=setDeviceName&value=' + encodeURIComponent(deviceName)
+		#
+		# http://172.16.200.158/hh?command=getZHMode
+		# {"value":2}
+		# http://172.16.200.105/ai?command=getModelDescription
+		# Adora SL
+		
 		
 		my $contentsAPIVersion = get("http://$dev1ip/ai?command=getAPIVersion");
 		LOGDEB "SEND HTTP: http://$dev1ip/ai?command=getAPIVersion";
