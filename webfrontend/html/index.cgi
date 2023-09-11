@@ -5,6 +5,7 @@ use CGI;
 use LoxBerry::System;
 use LoxBerry::Web;
 use LoxBerry::Log;
+use LoxBerry::JSON;
 use IO::Socket::INET;
 use LWP::Simple;
 use Net::Ping;
@@ -163,13 +164,22 @@ for (my $i=0; $i < $anzahl; $i++) {
 		# eco: none
 		# steamfinish: true / false
 		# partialload: true / false
+		#
+		# http://172.16.200.105/hh?command=getEcoInfo"
+		# {"water":{"total":45164,"average":12,"program":16},"energy":{"total":3863,"average":0.9,"program":0.9}}
+		# {"energy":{"total":111.699,"lastMonth":18.552,"lastYear":95.566,"average":0.709,"program":0.816}}
 
 		
 		my $contentsAPIVersion = get("http://$dev1ip/ai?command=getAPIVersion");
 		LOGDEB "SEND HTTP: http://$dev1ip/ai?command=getAPIVersion";
 		LOGDEB "Result HTTP: $contentsAPIVersion";
 		
-
+		# HTTP Status Wasser und Energie vom V-Zug Gerät abfragen und aufteilen (Input Samuel Müller)
+		my $contentsWasserEnergie = get("http://$dev1ip/hh?command=getEcoInfo");
+		LOGDEB "SEND HTTP: http://$dev1ip/hh?command=getEcoInfo";
+		LOGDEB "Result HTTP: $contentsWasserEnergie";
+		# print "Result HTTP: $contentsWasserEnergie<br>";
+		
 		# HTTP Status vom V-Zug Gerät abfragen und aufteilen
 		$contents = get("http://$dev1ip/ai?command=getDeviceStatus");
 		LOGDEB "SEND HTTP: http://$dev1ip/ai?command=getDeviceStatus";
@@ -227,6 +237,96 @@ for (my $i=0; $i < $anzahl; $i++) {
 				
 			}
 
+		# {"water":{"total":45164,"average":12,"program":16},"energy":{"total":3863,"average":0.9,"program":0.9}}
+		# {"water":{"total":45164,"average":12},"energy":{"total":3863,"average":0.9}}
+		# {"energy":{"total":111.699,"lastMonth":18.552,"lastYear":95.566,"average":0.709,"program":0.816}}
+		# {"energy":{"total":420.757,"average":0.643,"program":0.845}}
+
+		my @valuesWasserEnergie = split('\"',$contentsWasserEnergie);
+		
+		# Wasser Daten Adora SL
+		$Wasser = $valuesWasserEnergie[1];
+		if($Wasser eq "water"){
+			if($valuesWasserEnergie[3] eq "total"){
+				$WasserTotal = $valuesWasserEnergie[4];
+				$WasserTotal =~ s/\://g;
+				$WasserTotal =~ s/\,//g;		
+				$WasserTotal =~ s/\}//g;
+			}
+			if($valuesWasserEnergie[5] eq "average"){
+				$WasserAverage = $valuesWasserEnergie[6];
+				$WasserAverage =~ s/\://g;
+				$WasserAverage =~ s/\,//g;		
+				$WasserAverage =~ s/\}//g;
+			}
+			if($valuesWasserEnergie[7] eq "program"){
+				$WasserProgram = $valuesWasserEnergie[8];
+				$WasserProgram =~ s/\://g;
+				$WasserProgram =~ s/\,//g;
+				$WasserProgram =~ s/\}//g;
+			}
+		}
+		# Energy Daten Adora SL
+		$Energy = $valuesWasserEnergie[9];
+		if($Energy eq "energy"){
+			if($valuesWasserEnergie[11] eq "total"){
+				$EnergyTotal = $valuesWasserEnergie[12];
+				$EnergyTotal =~ s/\://g;
+				$EnergyTotal =~ s/\,//g;
+				$EnergyTotal =~ s/\}//g;
+			}
+			if($valuesWasserEnergie[13] eq "average"){
+				$EnergyAverage = $valuesWasserEnergie[14];
+				$EnergyAverage =~ s/\://g;
+				$EnergyAverage =~ s/\,//g;		
+				$EnergyAverage =~ s/\}//g;
+			}
+			if($valuesWasserEnergie[15] eq "program"){
+				$EnergyProgram = $valuesWasserEnergie[16];
+				$EnergyProgram =~ s/\://g;
+				$EnergyProgram =~ s/\,//g;
+				$EnergyProgram =~ s/\}//g;
+			}
+		}
+		# Energy Daten CombiSteamer & Dry
+		#  {"energy":{"total":111.699,"lastMonth":18.552,"lastYear":95.566,"average":0.709,"program":0.816}}
+		$Energy = $valuesWasserEnergie[1];
+		if($Energy eq "energy"){
+			if($valuesWasserEnergie[3] eq "total"){
+				$EnergyTotal = $valuesWasserEnergie[4];
+				$EnergyTotal =~ s/\://g;
+				$EnergyTotal =~ s/\,//g;
+				$EnergyTotal =~ s/\}//g;
+			}
+			if($valuesWasserEnergie[5] eq "average"){	
+				$EnergyAverage = $valuesWasserEnergie[6];
+				$EnergyAverage =~ s/\://g;
+				$EnergyAverage =~ s/\,//g;
+				$EnergyAverage =~ s/\}//g;
+			}
+			if($valuesWasserEnergie[9] eq "average"){	
+				$EnergyAverage = $valuesWasserEnergie[10];
+				$EnergyAverage =~ s/\://g;
+				$EnergyAverage =~ s/\,//g;
+				$EnergyAverage =~ s/\}//g;
+			}
+			if($valuesWasserEnergie[11] eq "program"){	
+				$EnergyProgram = $valuesWasserEnergie[12];
+				$EnergyProgram =~ s/\://g;
+				$EnergyProgram =~ s/\,//g;
+				$EnergyProgram =~ s/\}//g;
+			}
+		}
+		# Wenn kein Wert, dann 0 abfüllen
+		if($WasserTotal  eq "") {	$WasserTotal="0"; }	
+		if($WasserAverage  eq "") {	$WasserAverage="0"; }
+		if($WasserProgram  eq "") {	$WasserProgram="0"; }
+		if($EnergyTotal  eq "") {	$EnergyTotal="0"; }	
+		if($EnergyAverage  eq "") {	$EnergyAverage="0"; }
+		if($EnergyProgram  eq "") {	$EnergyProgram="0"; }
+
+
+
 
 		print "DeviceName$k\@$DeviceNameStr<br>";
 		print "APIVersion$k\@$DeviceAPIVersionStr<br>";
@@ -234,7 +334,13 @@ for (my $i=0; $i < $anzahl; $i++) {
 		print "Program$k\@$ProgrammStr<br>";
 		print "Status$k\@$StatusStr<br>";
 		print "Time$k\@$ZeitStr<br>";
-		print "Min$k\@$MinStr<br><br>";
+		print "Min$k\@$MinStr<br>";
+		print "WasserTotal$k\@$WasserTotal<br>";
+		print "WasserAverage$k\@$WasserAverage<br>";
+		print "WasserProgram$k\@$WasserProgram<br>";
+		print "EnergyTotal$k\@$EnergyTotal<br>";
+		print "EnergyAverage$k\@$EnergyAverage<br>";
+		print "EnergyProgram$k\@$EnergyProgram<br><br>";
 	
 
 		if ($HTTP_TEXT_Send_Enable == 1) {
@@ -248,23 +354,35 @@ for (my $i=0; $i < $anzahl; $i++) {
 			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Min/$MinStr");
 			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Devicename/$DeviceNameStr");
 			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Serial/$SerialStr");
+			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserTotal/$WasserTotal");
+			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserAverage/$WasserAverage");
+			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserProgram/$WasserProgram");
+			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserTotal/$EnergyTotal");
+			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserAverage/$EnergyAverage");
+			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserProgram/$EnergyProgram");
 			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Status/$StatusStr";
 			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Program/$ProgrammStr";
 			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Time/$ZeitStr";
 			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Min/$MinStr";
 			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Devicename/$DeviceNameStr";
 			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Serial/$SerialStr";
+			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserTotal/$WasserTotal";
+			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserAverage/$WasserAverage";
+			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserProgram/$WasserProgram";
+			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserTotal/$EnergyTotal";
+			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserAverage/$EnergyAverage";
+			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserProgram/$EnergyProgram";
 			}
 		else {
 			LOGDEB "HTTP_TEXT_Send_Enable: 0";
 		}
 			
 		if ($UDP_Send_Enable == 1) {
-			print $sock "DeviceName$k\@$DeviceNameStr\; Serial$k\@$SerialStr\; Program$k\@$ProgrammStr\; Status$k\@$StatusStr\; Time$k\@$ZeitStr; Min$k\@$MinStr";
+			print $sock "DeviceName$k\@$DeviceNameStr\; Serial$k\@$SerialStr\; Program$k\@$ProgrammStr\; Status$k\@$StatusStr\; Time$k\@$ZeitStr; Min$k\@$MinStr; WasserTotal$k\@$WasserTotal; WasserAverage$k\@$WasserAverage; WasserProgram$k\@$WasserProgram";
 			LOGDEB "Loxone IP: $LOX_IP";
 
 			LOGDEB "UDP Port: $UDP_Port";
-			LOGDEB "UDP Send: DeviceName$k\@$DeviceNameStr\; Serial$k\@$SerialStr\; Program$k\@$ProgrammStr\; Status$k\@$StatusStr\; Time$k\@$ZeitStr; Min$k\@$MinStr";
+			LOGDEB "UDP Send: DeviceName$k\@$DeviceNameStr\; Serial$k\@$SerialStr\; Program$k\@$ProgrammStr\; Status$k\@$StatusStr\; Time$k\@$ZeitStr; Min$k\@$MinStr; WasserTotal$k\@$WasserTotal; WasserAverage$k\@$WasserAverage; WasserProgram$k\@$WasserProgram";
 
 		}
 	}
