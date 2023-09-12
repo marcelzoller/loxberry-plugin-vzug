@@ -354,35 +354,35 @@ for (my $i=0; $i < $anzahl; $i++) {
 			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Min/$MinStr");
 			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Devicename/$DeviceNameStr");
 			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Serial/$SerialStr");
-			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserTotal/$WasserTotal");
-			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserAverage/$WasserAverage");
-			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserProgram/$WasserProgram");
-			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserTotal/$EnergyTotal");
-			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserAverage/$EnergyAverage");
-			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserProgram/$EnergyProgram");
+			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WaterTotal/$WasserTotal");
+			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WaterAverage/$WasserAverage");
+			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WaterProgram/$WasserProgram");
+			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_EnergyTotal/$EnergyTotal");
+			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_EnergyAverage/$EnergyAverage");
+			$contents = get("http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_EnergyProgram/$EnergyProgram");
 			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Status/$StatusStr";
 			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Program/$ProgrammStr";
 			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Time/$ZeitStr";
 			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Min/$MinStr";
 			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Devicename/$DeviceNameStr";
 			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_Serial/$SerialStr";
-			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserTotal/$WasserTotal";
-			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserAverage/$WasserAverage";
-			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserProgram/$WasserProgram";
-			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserTotal/$EnergyTotal";
-			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserAverage/$EnergyAverage";
-			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WasserProgram/$EnergyProgram";
+			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WaterTotal/$WasserTotal";
+			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WaterAverage/$WasserAverage";
+			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_WaterProgram/$WasserProgram";
+			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_EnergyTotal/$EnergyTotal";
+			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_EnergyAverage/$EnergyAverage";
+			LOGDEB "URL: http://$LOX_User:$LOX_PW\@$LOX_IP/dev/sps/io/VZUG_Device${k}_EnergyProgram/$EnergyProgram";
 			}
 		else {
 			LOGDEB "HTTP_TEXT_Send_Enable: 0";
 		}
 			
 		if ($UDP_Send_Enable == 1) {
-			print $sock "DeviceName$k\@$DeviceNameStr\; Serial$k\@$SerialStr\; Program$k\@$ProgrammStr\; Status$k\@$StatusStr\; Time$k\@$ZeitStr; Min$k\@$MinStr; WasserTotal$k\@$WasserTotal; WasserAverage$k\@$WasserAverage; WasserProgram$k\@$WasserProgram";
+			print $sock "DeviceName$k\@$DeviceNameStr\; Serial$k\@$SerialStr\; Program$k\@$ProgrammStr\; Status$k\@$StatusStr\; Time$k\@$ZeitStr; Min$k\@$MinStr; WaterTotal$k\@$WasserTotal; WaterAverage$k\@$WasserAverage; WaterProgram$k\@$WasserProgram; EnergyTotal$k\@$EnergyTotal; EnergyAverage$k\@$EnergyAverage; EnergyProgram$k\@$EnergyProgramProgram";
 			LOGDEB "Loxone IP: $LOX_IP";
 
 			LOGDEB "UDP Port: $UDP_Port";
-			LOGDEB "UDP Send: DeviceName$k\@$DeviceNameStr\; Serial$k\@$SerialStr\; Program$k\@$ProgrammStr\; Status$k\@$StatusStr\; Time$k\@$ZeitStr; Min$k\@$MinStr; WasserTotal$k\@$WasserTotal; WasserAverage$k\@$WasserAverage; WasserProgram$k\@$WasserProgram";
+			LOGDEB "UDP Send: DeviceName$k\@$DeviceNameStr\; Serial$k\@$SerialStr\; Program$k\@$ProgrammStr\; Status$k\@$StatusStr\; Time$k\@$ZeitStr; Min$k\@$MinStr; WaterTotal$k\@$WasserTotal; WaterAverage$k\@$WasserAverage; WaterProgram$k\@$WasserProgram; EnergyTotal$k\@$EnergyTotal; EnergyAverage$k\@$EnergyAverage; EnergyProgram$k\@$EnergyProgram";
 
 		}
 	}
