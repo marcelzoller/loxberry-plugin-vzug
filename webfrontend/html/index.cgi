@@ -243,6 +243,12 @@ for (my $i=0; $i < $anzahl; $i++) {
 		# {"energy":{"total":420.757,"average":0.643,"program":0.845}}
 
 		my @valuesWasserEnergie = split('\"',$contentsWasserEnergie);
+		my $WasserTotal = 0;
+		my $WasserAverage = 0;
+		my $WasserProgram = 0;
+		my $EnergyTotal = 0;
+		my $EnergyAverage = 0;
+		my $EnergyProgram = 0;
 		
 		# Wasser Daten Adora SL
 		$Wasser = $valuesWasserEnergie[1];
