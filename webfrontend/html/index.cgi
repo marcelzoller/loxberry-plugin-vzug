@@ -129,6 +129,7 @@ for (my $i=0; $i < $anzahl; $i++) {
 		# {"value":"1.7.0"}
 		# Version 1.1.0 ist die alte APIVersion
 		# Version 1.7.0 ist die neue APIVersion mit Abfrage mit hh?command=getProgram
+		# Version 1.8.0 ist die neue APIVersion (Stand 13.07.2024)
 		# http://172.16.200.158/hh?command=getProgram
 		# [{"id":2500,"name":"Stark trocken","status":"active","duration":{"set":12000,"act":1271},"allowedStatusChanges":{"options":["idle","paused"]}}]
 		# 
@@ -168,6 +169,15 @@ for (my $i=0; $i < $anzahl; $i++) {
 		# http://172.16.200.105/hh?command=getEcoInfo"
 		# {"water":{"total":45164,"average":12,"program":16},"energy":{"total":3863,"average":0.9,"program":0.9}}
 		# {"energy":{"total":111.699,"lastMonth":18.552,"lastYear":95.566,"average":0.709,"program":0.816}}
+		#
+		# http://172.16.200.105/hh?command=getDeviceStatus
+		# {"errors":[],"displayedErrors":[],"notifications":[],"isUpdatePossible":true}
+		# 
+		# http://172.16.200.105/ai?command=getCloudStatus
+		# {"enabled":true,"claimed":false,"telemetryCollectionEnabled":true,"status":"connected","secTokenValid":true,"scope":"PROD"}
+		# 
+		# http://172.16.200.105/ai?command=getFWVersion
+		# {"fn":"23038 007651","SW":"1052633-R19","SD":"1052633-R19","HW":"1022913-R08","apiVersion":"1.8.0","phy":"WLAN","deviceUuid":"3902409"}
 
 		
 		my $contentsAPIVersion = get("http://$dev1ip/ai?command=getAPIVersion");
